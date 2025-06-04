@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/confirmPword.js" defer></script>
+  <title><%= title %></title>
+</head>
+<body>
+  <%- include("./navbar") %>
+  <header>
+    <h1><%= title %></h1>
+  </header>
+  <main>
+    <form action="/newUser" method="POST">
+      <div>
+        <label for="username">Full Name *</label>
+        <input
+          id="username"
+          name="username"
+          placeholder="Nausicaa Nakamura"
+          type="text"
+          autocomplete="off"
+          minlength="6"
+          maxlength="60"
+          title="Full name must be between 6 and 60 characters."
+          required
+          autofocus
+        />
+      </div>
+      <div>
+        <label for="email">Email *</label>
+        <input
+          id="email"
+          name="email"
+          placeholder="nausicaa.nakamura@outlook.com"
+          type="email"
+          autocomplete="off"
+          minlength="6"
+          maxlength="60"
+          title="Email must be between 6 and 60 characters."
+          required
+        />
+      </div>
+      <div>
+        <label for="password">Password *</label>
+        <input
+          id="password"
+          name="password"
+          type="password"
+          autocomplete="off"
+          pattern="^(?=.*\d])(?=.*[a-z])(?=.*[A-Z])(?=.*\W)(?!.* ).{8,24}$"
+          title="Password must contain one number, one lowercase letter, one uppercase letter, one special character, no spaces, and be between 8 and 24 characters."
+        />
+      </div>
+      <div>
+        <label for="confirmPassword">Confirm password *</label>
+        <input
+          id="confirmPassword"
+          name="confirmPassword"
+          type="password"
+          autocomplete="off"
+        />
+        <div>
+          <button type="submit">Sign up</button>
+        </div>
+      </div>
+    </form>
+  </main>
+</body>
+</html>
