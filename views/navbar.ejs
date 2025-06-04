@@ -12,6 +12,14 @@
     <div>
       <a href="/newUser">Sign up</a>
     </div>
+    <div>
+      <a href="/logIn">Log in</a>
+    </div>
+    <% if (locals.user) { %>
+      <div>
+        <a href="/logOut">Log out</a>
+      </div>
+    <% } %>
   </nav>
 </body>
 </html>

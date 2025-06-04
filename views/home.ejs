@@ -13,6 +13,11 @@
   </header>
   <main>
     <h2>Ready to go file loading crazy?</h2>
+    <% if (locals.user) { %>
+      <h2>Welcome back <%= user.username %></h2>
+    <% } else { %>
+      <h2>Please sign up or log in to enjoy this app.</h2>
+    <% } %>
   </main>
 </body>
 </html>

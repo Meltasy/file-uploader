@@ -6,9 +6,9 @@ const lengthErr = 'must be between 6 and 60 characters.'
 const validateNewUser = [
   body('username')
     .trim()
-    .notEmpty().withMessage(`Full name ${reqErr}`)
-    .isLength({ min: 6, max: 60 }).withMessage(`Full name ${lengthErr}`)
-    .matches(/^[A-Za-z\s]+$/).withMessage('Surname must only contain letters and spaces.'),
+    .notEmpty().withMessage(`Username ${reqErr}`)
+    .isLength({ min: 6, max: 60 }).withMessage(`Username ${lengthErr}`)
+    .matches(/^[A-Za-z\s]+$/).withMessage('Username must only contain letters and spaces.'),
   body('email')
     .notEmpty().withMessage(`Email ${reqErr}`)
     .isEmail().withMessage('This is not a valid email address.')
