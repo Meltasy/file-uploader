@@ -62,8 +62,13 @@ textarea {
   min-width: 300px;
 }
 
+input[type="file"] {
+  background-color: var(--secondary-color);
+}
+
 label,
-button {
+button,
+::file-selector-button {
   font-family: inherit;
   font-size: 1.2rem;
   font-weight: 700;
@@ -73,7 +78,8 @@ button {
   align-self: center;
 }
 
-button {
+button,
+::file-selector-button {
   color: var(--text-color);
   background-color: var(--secondary-color-dark);
   border: none;
@@ -81,9 +87,14 @@ button {
   padding: 15px 30px;
 }
 
+::file-selector-button:hover,
 button:hover {
   color: var(--background-color);
   background-color: var(--secondary-color-light);
+}
+
+::file-selector-button {
+  margin-right: 1rem;
 }
 
 a {

@@ -12,12 +12,14 @@
     <h1><%= title %></h1>
   </header>
   <main>
-    <h2>Ready to go file loading crazy?</h2>
-    <% if (locals.currentUser) { %>
-      <h2>Hi there, <%= currentUser.username %>!</h2>
-    <% } else { %>
-      <h2>Please sign up or log in to enjoy this app.</h2>
-    <% } %>
+    <form action="/newFile" method="POST" enctype="multipart/form-data">
+      <div>
+        <input id="uploadFile" name="uploadFile" type="file" required />
+      </div>
+      <div class="button">
+        <button type="submit">Upload file</button>
+      </div>
+    </form>
   </main>
 </body>
 </html>

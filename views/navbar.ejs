@@ -1,25 +1,21 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
-<body>
-  <nav>
-    <div>
-      <a href="/">Home</a>
-    </div>
+<nav>
+  <div>
+    <a href="/">Home</a>
+  </div>
+  <% if (!locals.currentUser) { %>
     <div>
       <a href="/newUser">Sign up</a>
     </div>
     <div>
       <a href="/logIn">Log in</a>
     </div>
-    <% if (locals.user) { %>
-      <div>
-        <a href="/logOut">Log out</a>
-      </div>
-    <% } %>
-  </nav>
-</body>
-</html>
+  <% } %>
+  <% if (locals.currentUser) { %>
+    <div>
+      <a href="/newFile">Upload file</a>
+    </div>
+    <div>
+      <a href="/logOut">Log out</a>
+    </div>
+  <% } %>
+</nav>

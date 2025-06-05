@@ -4,6 +4,8 @@ const express = require('express')
 const app = express()
 const session = require('express-session')
 const passport = require('passport')
+const { PrismaSessionStore } = require('@quixo3/prisma-session-store')
+const { PrismaClient } = require('@prisma/client')
 const CustomError = require('./errors/CustomError')
 
 // Will need to install and use method-override to use DELETE, PUT and PATCH where these aren't supported.
@@ -23,9 +25,20 @@ app.use(express.urlencoded({ extended: true }))
 
 // App middleware
 app.use(session({
+  cookie: {
+    maxAge: 7 * 24 * 60 * 60 * 1000
+  },
   secret: process.env.SECRET,
-  resave: false,
-  saveUninitialized: false
+  resave: true,
+  saveUninitialized: true,
+  store: new PrismaSessionStore(
+    new PrismaClient(),
+    {
+      checkPeriod: 2 * 60 * 1000,
+      dbRecordIdIsSessionId: true,
+      dbRecordIdFunction: undefined,
+    }
+  )
 }))
 app.use(passport.session())
 
