@@ -62,7 +62,7 @@ textarea {
   min-width: 300px;
 }
 
-input[type="file"] {
+#uploadFile {
   background-color: var(--secondary-color);
 }
 

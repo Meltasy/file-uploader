@@ -4,6 +4,7 @@ const express = require('express')
 const app = express()
 const session = require('express-session')
 const passport = require('passport')
+const multer = require('multer')
 const { PrismaSessionStore } = require('@quixo3/prisma-session-store')
 const { PrismaClient } = require('@prisma/client')
 const CustomError = require('./errors/CustomError')
@@ -11,10 +12,23 @@ const CustomError = require('./errors/CustomError')
 // Will need to install and use method-override to use DELETE, PUT and PATCH where these aren't supported.
 
 const userRouter = require('./routes/userRouter')
+const fileRouter = require('./routes/fileRouter')
+const folderRouter = require('./routes/folderRouter')
 
 // Handle static assets
 const assetsPath = path.join(__dirname, 'public')
 app.use(express.static(assetsPath))
+
+// Hanlde file uploads
+
+const uploadPath = path.join(__dirname, 'public', 'uploads')
+const upload = multer({
+  dest: uploadPath,
+  limits: {
+    fileSize: 10 * 1024 * 1024
+  }
+})
+app.locals.upload = upload
 
 // ejs templating
 app.set('views', path.join(__dirname, 'views'))
@@ -49,6 +63,8 @@ app.use((req, res, next) => {
 })
 
 app.use('/', userRouter)
+app.use('/file/', fileRouter)
+app.use('/folder', folderRouter)
 
 // Catches any final errors - must be at end
 app.use((req, res, next) => {

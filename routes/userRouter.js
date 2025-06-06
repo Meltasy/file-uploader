@@ -16,7 +16,4 @@ userRouter.get('/logOut', userController.logOutUser)
 userRouter.get('/newUser', userController.createUserGet)
 userRouter.post('/newUser', validateNewUser, userController.createUserPost)
 
-userRouter.get('/newFile', userController.createFileGet)
-userRouter.post('/newFile', userController.createFilePost)
-
 module.exports = userRouter

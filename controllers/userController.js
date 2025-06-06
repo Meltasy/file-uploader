@@ -13,14 +13,12 @@ const getUserHome = function(req, res) {
 }
 
 const logInUser = function(req, res) {
-  // Do we need to add cookie session or user here?
   res.render('logIn', {
     title: 'Log In'
   })
 }
 
 const logOutUser = asyncHandler(async(req, res) => {
-  // Do we need to add cookie session or user here?
   req.logout((err) => {
     if (err) {
       throw new CustomError('Unable to log user out.', 400)
@@ -61,39 +59,10 @@ const createUserPost = asyncHandler(async (req, res) => {
   })
 })
 
-const createFileGet = function(req, res) {
-  res.render('newFile', {
-    user: req.user,
-    title: 'Upload File'
-  })
-}
-
-// This needs looking at - how do I upload file and where to?
-const createFilePost = asyncHandler(async (req, res) => {
-  const uploadFile = req.file
-  const username = req.user
-  if (!uploadFile) {
-    throw new CustomError('Uploaded file not found.', 400)
-  }
-  console.log(uploadFile)
-  await prisma.user.create({
-    where: {
-      username: username
-    },
-    data: {
-      name: filename,
-      url: url,
-      size: size
-    }
-  })
-})
-
 module.exports = {
   getUserHome,
   logInUser,
   logOutUser,
   createUserGet,
-  createUserPost,
-  createFileGet,
-  createFilePost
+  createUserPost
 }
