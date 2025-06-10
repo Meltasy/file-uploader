@@ -12,7 +12,6 @@ const CustomError = require('./errors/CustomError')
 // Will need to install and use method-override to use DELETE, PUT and PATCH where these aren't supported.
 
 const userRouter = require('./routes/userRouter')
-const fileRouter = require('./routes/fileRouter')
 const folderRouter = require('./routes/folderRouter')
 
 // Handle static assets
@@ -63,7 +62,6 @@ app.use((req, res, next) => {
 })
 
 app.use('/', userRouter)
-app.use('/file/', fileRouter)
 app.use('/folder', folderRouter)
 
 // Catches any final errors - must be at end

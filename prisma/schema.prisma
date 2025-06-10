@@ -32,6 +32,8 @@ model Folder {
   owner      User     @relation(fields: [ownerId], references: [id])
   ownerId    String
   files      File[]
+
+  @@unique([name, ownerId])
 }
 
 model File {
@@ -44,6 +46,8 @@ model File {
   ownerId    String
   folder     Folder   @relation(fields: [folderId], references: [id])
   folderId   String
+
+  @@unique([name, folderId])
 }
 
 model Session {

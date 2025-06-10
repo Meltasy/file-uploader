@@ -39,6 +39,17 @@ header {
   margin-bottom: 2rem;
 }
 
+dialog {
+  outline: none;
+  border: none;
+  background-color: var(--secondary-color);
+}
+
+::backdrop {
+  background-color: var(--primary-color);
+  opacity: 0.75;
+}
+
 form {
   background-color: var(--secondary-color);
   width: max-content;
@@ -76,6 +87,8 @@ button,
 
 .button {
   align-self: center;
+  display: flex;
+  gap: 1rem;
 }
 
 button,

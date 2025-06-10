@@ -8,7 +8,8 @@ const validateNewUser = [
     .trim()
     .notEmpty().withMessage(`Username ${reqErr}`)
     .isLength({ min: 6, max: 60 }).withMessage(`Username ${lengthErr}`)
-    .matches(/^[A-Za-z\s]+$/).withMessage('Username must only contain letters and spaces.'),
+    .matches(/^[A-Za-z\s]+$/).withMessage('Username must only contain letters and spaces.')
+    .escape(),
   body('email')
     .notEmpty().withMessage(`Email ${reqErr}`)
     .isEmail().withMessage('This is not a valid email address.')

@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="/styles.css">
+  <script src="/openModals.js" defer></script>
   <title><%= title %></title>
 </head>
 <body>
@@ -15,6 +16,33 @@
     <h2>Ready to go file loading crazy?</h2>
     <% if (locals.currentUser) { %>
       <h2>Hi there, <%= currentUser.username %>!</h2>
+      <aside>
+        <button type="button" id="openFolderModal">Add folder</button>
+        <dialog id="folderModal">
+          <form action="/folder/newFolder" method="POST">
+            <div>
+              <label for="folderName">Name *</label>
+              <input
+                id="folderName"
+                name="folderName"
+                type="text"
+                autocomplete="off"
+                minlength="3"
+                maxlength="30"
+                title="Name must be between 3 and 30 characters."
+                required
+                autofocus
+              />
+            </div>
+            <div class="button">
+              <button type="submit">Add folder</button>
+              <button type="button" id="closeFolderModal">Cancel</button>
+            </div>
+          </form>
+        </dialog>
+      </aside>
+      <section>
+      </section>
     <% } else { %>
       <h2>Please sign up or log in to enjoy this app.</h2>
     <% } %>
