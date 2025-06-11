@@ -4,44 +4,73 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="/styles.css">
-  <script src="/openModals.js" defer></script>
+  <script src="/openFolderModal.js" defer></script>
   <title><%= title %></title>
 </head>
 <body>
   <%- include("./partials/navbar") %>
   <header>
-    <h1><%= title %></h1>
+    <% if (locals.currentUser) { %>
+      <h1><%= title %>, <%= currentUser.username %>!</h1>
+      <button type="button" id="openFolderModal">Add folder</button>
+      <dialog id="folderModal">
+        <form action="/folder/newFolder" method="POST">
+          <div>
+            <label for="folderName">Name *</label>
+            <input
+              id="folderName"
+              name="folderName"
+              type="text"
+              autocomplete="off"
+              minlength="3"
+              maxlength="30"
+              title="Name must be between 3 and 30 characters."
+              required
+              autofocus
+            />
+            <button type="button" id="closeFolderModal" class="cancel">X</button>
+          </div>
+          <div class="button">
+            <button type="submit">Add folder</button>
+          </div>
+        </form>
+      </dialog>
+      <% } else { %>
+        <h1><%= title %>!</h1>
+      <% } %>
   </header>
   <main>
-    <h2>Ready to go file loading crazy?</h2>
     <% if (locals.currentUser) { %>
-      <h2>Hi there, <%= currentUser.username %>!</h2>
-      <aside>
-        <button type="button" id="openFolderModal">Add folder</button>
-        <dialog id="folderModal">
-          <form action="/folder/newFolder" method="POST">
-            <div>
-              <label for="folderName">Name *</label>
-              <input
-                id="folderName"
-                name="folderName"
-                type="text"
-                autocomplete="off"
-                minlength="3"
-                maxlength="30"
-                title="Name must be between 3 and 30 characters."
-                required
-                autofocus
-              />
-            </div>
-            <div class="button">
-              <button type="submit">Add folder</button>
-              <button type="button" id="closeFolderModal">Cancel</button>
-            </div>
-          </form>
-        </dialog>
-      </aside>
       <section>
+        <table>
+          <tr>
+            <th>Name</th>
+            <th>Created</th>
+            <th>Number of files</th>
+            <th>Actions</th>
+          </tr>
+            <% folders.forEach(folder => { %>
+              <tr>
+                <td><%= folder.name %></td>
+                <td>
+                  <%= folder.uploadedAt.toString().split(' ').slice(0, 3).join(' ') %>
+                  <%= folder.uploadedAt.toString().split(' ').slice(4, 5).join(' ') %>
+                </td>
+                <td><%= folder._count.files %></td>
+                <td>
+                  <form action="/folder/<%= folder.id %>">
+                    <button type="submit">Open</button>
+                  </form>
+                  <form action="/folder/<%= folder.id %>/edit" method="POST">
+                    <button type="submit">Edit</button>
+                  </form>
+                  <form action="/folder/<%= folder.id %>/delete" method="POST">
+                    <button type="submit">Delete</button>
+                  </form>
+                </td>
+              </tr>
+            <% }) %>
+        </table>
       </section>
     <% } else { %>
       <h2>Please sign up or log in to enjoy this app.</h2>

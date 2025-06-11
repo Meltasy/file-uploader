@@ -12,7 +12,7 @@ const createFolderPost = asyncHandler(async (req, res) => {
   const folderName = req.body.folderName
   console.log('Folder name: ', folderName)
   if (!folderName) {
-    throw new CustomError('Folder name not found.', 400)
+    throw new CustomError('Folder name not found.', 404)
   }
   try {
     await prisma.folder.create({
@@ -31,40 +31,99 @@ const createFolderPost = asyncHandler(async (req, res) => {
   }
 })
 
-// const getFolder = function(req, res) {
-//   res.render('folder', {
-//     user: req.user,
-//     title: folderName
-//     message: ''
-//   })
-// }
-
-const createFilePost = asyncHandler(async (req, res) => {
-  const uploadFile = req.file
-  // const { originalName, path, size } = req.file
-  if (!uploadFile) {
-    throw new CustomError('Uploaded file not found.', 400)
+const getFolder = asyncHandler(async (req, res) => {
+  const folderId = req.params.folderId
+  const folder = await prisma.folder.findFirst({
+    where: {
+      id: folderId,
+      ownerId: req.user.id
+    },
+    include: {
+      files: {
+        orderBy: {
+          uploadedAt: 'desc'
+        }
+      }
+    }
+  })
+  if (!folder) {
+    throw new CustomError('Folder not found.', 404)
   }
-  // Upload file to cloud and text info to database
-  // await prisma.user.create({
-  //   where: {
-  //     username: req.user.username
-  //   },
-  //   data: {
-  //     name: uploadFile.originalname,
-  //     url: uploadFile.path,
-  //     size: uploadFile.size
-  //   }
-  // })
   res.render('folder', {
     user: req.user,
-    title: 'Upload File',
-    message: 'You have successfully uploaded the file!'
+    title: folder.name,
+    folder: folder,
+    files: folder.files,
   })
+})
+
+const createFilePost = asyncHandler(async (req, res) => {
+  const folderId = req.params.folderId
+  const uploadFile = req.file
+  if (!uploadFile) {
+    throw new CustomError('Uploaded file not found.', 404)
+  }
+  const folder = await prisma.folder.findFirst({
+    where: {
+      id: folderId,
+      ownerId: req.user.id
+    }
+  })
+  if (!folder) {
+    throw new CustomError('Folder not found.', 404)
+  }
+  try {
+    await prisma.file.create({
+      data: {
+        name: uploadFile.originalname,
+        url: uploadFile.path,
+        size: uploadFile.size,
+        ownerId: req.user.id,
+        folderId: folderId
+      }
+    })
+    res.redirect(`/folder/${folderId}`)
+  } catch (error) {
+    if (error.code === 'P2002') {
+      throw new CustomError('A file with this name already exists in this folder.', 400)
+    }
+    console.error('Database error:', error)
+    throw new CustomError('Failed to upload file. Please try again.', 500)
+  }
+})
+
+// Add ability to edit (put / patch) folder
+
+const deleteFolder = asyncHandler(async (req, res) => {
+  const folderId = req.params.folderId
+  const folder = await prisma.folder.findFirst({
+    where: {
+      id: folderId,
+      ownerId: req.user.id
+    }
+  })
+  if (!folder) {
+    throw new CustomError('Folder not found.', 404)
+  }
+  await prisma.$transaction(async (tx) =>{
+    await tx.file.deleteMany({
+      where: {
+        folderId: folderId
+      }
+    })
+    await tx.folder.delete({
+      where: {
+        id: folderId,
+        ownerId: req.user.id
+      }
+    })
+  })
+  res.redirect('/')
 })
 
 module.exports = {
   createFolderPost,
-  // getFolder,
-  createFilePost
+  getFolder,
+  createFilePost,
+  deleteFolder
 }

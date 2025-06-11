@@ -19,12 +19,15 @@ body {
   text-align: center;
 }
 
-p {
-  margin: 0.5rem;
+h1 {
+  font-size: 3rem;
+  text-shadow: 2px 2px var(--secondary-color);
 }
 
 nav {
   background-color: var(--primary-color);
+  width: 80%;
+  margin: auto;
   display: flex;
   justify-content: space-around;
 }
@@ -36,7 +39,16 @@ nav > div {
 }
 
 header {
-  margin-bottom: 2rem;
+  width: 80%;
+  margin: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+main {
+  width: 80%;
+  margin: auto;
 }
 
 dialog {
@@ -61,15 +73,14 @@ form {
   gap: 1rem;
 }
 
-input,
-textarea {
+input {
   font-family: inherit;
   font-size: 1.2rem;
   color: var(--text-color);
   background-color: var(--secondary-color-dark);
   border: none;
   outline: none;
-  padding: 0.5rem;
+  padding: 0.5rem 1rem;
   min-width: 300px;
 }
 
@@ -87,8 +98,6 @@ button,
 
 .button {
   align-self: center;
-  display: flex;
-  gap: 1rem;
 }
 
 button,
@@ -97,7 +106,7 @@ button,
   background-color: var(--secondary-color-dark);
   border: none;
   outline: none;
-  padding: 15px 30px;
+  padding: 0.5rem 1rem;
 }
 
 ::file-selector-button:hover,
@@ -110,12 +119,72 @@ button:hover {
   margin-right: 1rem;
 }
 
+.cancel {
+  color: var(--background-color);
+  background-color: var(--secondary-color);
+}
+
+.cancel:hover {
+  color: var(--text-color);
+  background-color: var(--secondary-color-dark);
+}
+
 a {
   color: var(--text-color);
-  padding: 15px 30px;
+  padding: 0.5rem 1rem;
   text-decoration: none;
 }
 
 a:hover {
+  background-color: var(--primary-color-dark);
+}
+
+table {
+  margin: auto;
+  width: 100%;
+  border-collapse: collapse;
+}
+
+td, th {
+  border: 1px solid var(--primary-color);
+  text-align: left;
+  padding: 0.5rem;
+}
+
+th:nth-child(1) {
+  width: 40%;
+}
+
+th:nth-child(3) {
+  width: 10%;
+}
+
+th:nth-child(2),
+th:nth-child(4) {
+  width: 25%;
+}
+
+tr:nth-child(even) {
+  background-color: var(--primary-color);
+}
+
+td form {
+  background-color: inherit;
+  margin: 0 0.5rem 0 0;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  width: auto;
+}
+
+td button {
+  font-size: 1rem;
+  font-weight: 400;
+  background-color: inherit;
+  padding: 0.25rem 0.5rem;
+}
+
+td button:hover {
+  color: var(--text-color);
   background-color: var(--primary-color-dark);
 }

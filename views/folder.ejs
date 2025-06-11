@@ -4,31 +4,58 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="/styles.css">
+  <script src="/openFileModal.js" defer></script>
   <title><%= title %></title>
 </head>
 <body>
   <%- include("./partials/navbar") %>
   <header>
     <h1><%= title %></h1>
-    <h2><%= message %></h2>
+    <button type="button" id="openFileModal">Upload file</button>
+    <dialog id="fileModal">
+      <form action="/folder/<%= folder.id %>/newFile" method="POST" enctype="multipart/form-data">
+        <div>
+          <input id="uploadFile" name="uploadFile" type="file" required />
+          <button type="button" id="closeFileModal" class="cancel">X</button>
+        </div>
+        <div class="button">
+          <button type="submit">Upload file</button>
+        </div>
+      </form>
+    </dialog>
   </header>
   <main>
-    <aside>
-      <button type="button" class="openFileModal">Uploade file</button>
-      <dialog class="fileModal">
-        <form action="/folder/newFile" method="POST" enctype="multipart/form-data">
-          <div>
-            <input id="uploadFile" name="uploadFile" type="file" required />
-          </div>
-          <div class="button">
-            <button type="submit">Upload file</button>
-            <button type="button" class="closeFileModal">Cancel</button>
-          </div>
-        </form>
-      </dialog>
-    </aside>
     <section>
-
+      <% if (files.length > 0) { %>
+        <table>
+          <tr>
+            <th>Name</th>
+            <th>Created</th>
+            <th>Size</th>
+            <th>Actions</th>
+          </tr>
+          <% files.forEach(file => { %>
+            <tr>
+              <td><%= file.name %></td>
+              <td>
+                <%= file.uploadedAt.toString().split(' ').slice(0, 3).join(' ') %>
+                <%= file.uploadedAt.toString().split(' ').slice(4, 5).join(' ') %>
+              </td>
+              <td><%= (file.size / 1024).toFixed(2) %></td>
+              <td>
+                <form action="<%= file.url %>" target="_blank">
+                  <button>Open</button>
+                </form>
+                <form action="">
+                  <button>Delete</button>
+                </form>
+              </td>
+            </tr>
+          <% }) %>
+        </table>
+      <% } else { %>
+        <h3>This folder is empty. Please upload some files to get started!</h3>
+      <% } %>
     </section>
   </main>
 </body>
