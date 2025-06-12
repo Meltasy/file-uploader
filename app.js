@@ -20,11 +20,18 @@ app.use(express.static(assetsPath))
 
 // Hanlde file uploads
 
-const uploadPath = path.join(__dirname, 'public', 'uploads')
 const upload = multer({
-  dest: uploadPath,
+  storage: multer.memoryStorage(),
   limits: {
     fileSize: 10 * 1024 * 1024
+  },
+  fileFilter: (req, file, cb) => {
+    const blockedFiles = ['application/x-executable', 'application/x-msdownload', 'application/dosexec']
+    if (blockedFiles.includes(file.mimetype)) {
+      cb(new Error('This file type is not allowed for security reasons'), false)
+    } else {
+      cb(null, true)
+    }
   }
 })
 app.locals.upload = upload

@@ -67,7 +67,6 @@ const createUserPost = asyncHandler(async (req, res) => {
     throw new CustomError('Username, email or password not found.', 404)
   }
   const hashPword = await bcryptjs.hash(password, 10)
-  console.log(username, email, password, hashPword)
   const newUser = await prisma.user.create({
     data: {
       username: username,

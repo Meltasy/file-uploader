@@ -1,6 +1,6 @@
 const { body } = require('express-validator')
 
-const validateNewFolder = [
+const folderValidation = [
   body('folderName')
     .trim()
     .notEmpty().withMessage('Folder name is required.')
@@ -9,4 +9,4 @@ const validateNewFolder = [
     .escape(),
 ]
 
-module.exports = { validateNewFolder }
+module.exports = { folderValidation }

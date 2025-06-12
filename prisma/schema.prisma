@@ -37,15 +37,16 @@ model Folder {
 }
 
 model File {
-  id         String   @id @default(uuid())
-  name       String
-  url        String
-  size       Int
-  uploadedAt DateTime @default(now())
-  owner      User     @relation(fields: [ownerId], references: [id])
-  ownerId    String
-  folder     Folder   @relation(fields: [folderId], references: [id])
-  folderId   String
+  id          String   @id @default(uuid())
+  name        String
+  url         String
+  storagePath String?
+  size        Int
+  uploadedAt  DateTime @default(now())
+  owner       User     @relation(fields: [ownerId], references: [id])
+  ownerId     String
+  folder      Folder   @relation(fields: [folderId], references: [id])
+  folderId    String
 
   @@unique([name, folderId])
 }

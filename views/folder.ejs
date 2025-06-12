@@ -11,12 +11,12 @@
   <%- include("./partials/navbar") %>
   <header>
     <h1><%= title %></h1>
-    <button type="button" id="openFileModal">Upload file</button>
-    <dialog id="fileModal">
+    <button type="button" class="openFileModal">Upload file</button>
+    <dialog class="fileModal">
       <form action="/folder/<%= folder.id %>/newFile" method="POST" enctype="multipart/form-data">
         <div>
           <input id="uploadFile" name="uploadFile" type="file" required />
-          <button type="button" id="closeFileModal" class="cancel">X</button>
+          <button type="button" class="closeFileModal" class="cancel">X</button>
         </div>
         <div class="button">
           <button type="submit">Upload file</button>
@@ -44,10 +44,13 @@
               <td><%= (file.size / 1024).toFixed(2) %></td>
               <td>
                 <form action="<%= file.url %>" target="_blank">
-                  <button>Open</button>
+                  <button type="submit">Open</button>
                 </form>
                 <form action="">
-                  <button>Delete</button>
+                  <button>Download</button>
+                </form>
+                <form action="/folder/<%= folder.id %>/<%= file.id %>/delete" method="POST">
+                  <button type="submit">Delete</button>
                 </form>
               </td>
             </tr>
