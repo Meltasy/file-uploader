@@ -242,6 +242,126 @@ const deleteFile = asyncHandler(async (req, res) => {
   }
 })
 
+const createShare = asyncHandler(async (req, res) => {
+  const folderId = req.params.folderId
+  const { duration } = req.body
+  const folder = await prisma.folder.findFirst({
+    where: {
+      id: folderId,
+      ownerId: req.user.id
+    }
+  })
+  if (!folder) {
+    throw new CustomError('Folder not found.', 404)
+  }
+  const durationMatch = duration.match(/^(\d+)([dhm])$/)
+  if (!durationMatch) {
+    throw new CustomError('Invalid duration format. Use format, e.g. 1d, 7d, 30d', 400)
+  }
+  const amount = parseInt(durationMatch[1])
+  const unit = durationMatch[2]
+  let expiresAt = new Date()
+  switch (unit) {
+    case 'd':
+      expiresAt.setDate(expiresAt.getDate() + amount)
+      break
+    case 'h':
+      expiresAt.setHours(expiresAt.getHours() + amount)
+      break
+    case 'm':
+      expiresAt.setMinutes(expiresAt.getMinutes() + amount)
+      break
+    default:
+      throw new CustomError('Invalid duration unit. Use d for days, h for hours, m for minutes', 400)
+  }
+  try {
+    const shared = await prisma.shared.create({
+      data: {
+        folderId: folderId,
+        ownerId: req.user.id,
+        expiresAt: expiresAt
+      }
+    })
+    const shareUrl = `${req.protocol}://${req.get('host')}/share/${shared.shareId}`
+    res.json({
+      success: true,
+      shareUrl: shareUrl,
+      expiresAt: expiresAt
+    })
+  } catch (error) {
+    console.error('Share creation error:', error)
+    throw new CustomError('Failed to create share. Please try again.', 500)
+  }
+})
+
+const getSharedFolder = asyncHandler(async (req, res) => {
+  const shareId = req.params.shareId
+  const shared = await prisma.shared.findFirst({
+    where: {
+      shareId: shareId,
+      expiresAt: {
+        gt: new Date()
+      }
+    },
+    include: {
+      folder: {
+        include: {
+          files: {
+            orderBy: {
+              uploadedAt: 'desc'
+            }
+          }
+        }
+      },
+      owner: {
+        select: {
+          username: true
+        }
+      }
+    }
+  })
+  if (!shared) {
+    throw new CustomError('Shared folder not found or has expired.', 404)
+  }
+  const filesSignedUrls = await Promise.all(
+    shared.folder.files.map(async (file) => {
+      const signedUrl = await getSignedUrl(file.storagePath, 3600)
+      return {
+        ...file,
+        signedUrl: signedUrl
+      }
+    })
+  )
+  res.render('shared', {
+    title: `${shared.folder.name} (Shared)`,
+    folder: shared.folder,
+    files: filesSignedUrls,
+    owner: shared.owner.username,
+    expiresAt: shared.expiresAt
+  })
+})
+
+const deleteShare = asyncHandler(async (req, res) => {
+  const folderId = req.params.folderId
+  const shareId = req.params.shareId
+  const shared = await prisma.shared.findFirst({
+    where: {
+      shareId: shareId,
+      folderId: folderId,
+      owner: req.user.id
+    }
+  })
+  if (!shared) {
+    throw new CustomError('Shared folder not found.', 404)
+  }
+  await prisma.shared.delete({
+    where: {
+      id: shared.id
+    }
+  })
+  res.json({ success: true })
+})
+
 module.exports = {
   createFolderPost,
   getFolder,
@@ -249,5 +369,8 @@ module.exports = {
   updateFolder,
   deleteFolder,
   downloadFile,
-  deleteFile
+  deleteFile,
+  createShare,
+  getSharedFolder,
+  deleteShare
 }

@@ -24,6 +24,10 @@ h1 {
   text-shadow: 2px 2px var(--secondary-color);
 }
 
+h4 {
+  margin: 0;
+}
+
 nav {
   background-color: var(--primary-color);
   width: 80%;
@@ -44,6 +48,12 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+header > div {
+  display: grid;
+  gap: 1rem;
+  justify-items: center;
 }
 
 main {
@@ -73,7 +83,8 @@ form {
   gap: 1rem;
 }
 
-input {
+input,
+select {
   font-family: inherit;
   font-size: 1.2rem;
   color: var(--text-color);
@@ -84,8 +95,26 @@ input {
   min-width: 300px;
 }
 
+select {
+  margin-bottom: 1rem;
+}
+
 #uploadFile {
   background-color: var(--secondary-color);
+}
+
+#shareResult {
+  display: none;
+}
+
+#shareResult input {
+  min-width: 500px;
+}
+
+.expires {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: space-between;
 }
 
 label,

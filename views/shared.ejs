@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/styles.css">
+  <title><%= title %></title>
+</head>
+<body>
+  <%- include("./partials/navbar") %>
+  <header>
+    <h1><%= title %></h1>
+    <div>
+      <h4>Shared by: <%= owner %></h4>
+      <h4>Expires: <%= expiresAt.toLocaleString() %></h4>
+    </div>
+  </header>
+  <main>
+    <section>
+      <% if (files.length > 0) { %>
+        <table>
+          <tr>
+            <th>Name</th>
+            <th>Created</th>
+            <th>Size</th>
+            <th>Actions</th>
+          </tr>
+          <% files.forEach(file => { %>
+            <tr>
+              <td><%= file.name %></td>
+              <td>
+                <%= file.uploadedAt.toString().split(' ').slice(0, 3).join(' ') %>
+                <%= file.uploadedAt.toString().split(' ').slice(4, 5).join(' ') %>
+              </td>
+              <td><%= (file.size / 1024).toFixed(2) %> KB</td>
+              <td>
+                <a href="<%= file.signedUrl %>" target="_blank">
+                  <button type="button">Open</button>
+                </a>
+                <form action="/folder/<%= folder.id %>/file/<%= file.id %>/download" method="GET">
+                  <button type="submit">Download</button>
+                </form>
+              </td>
+            </tr>
+          <% }) %>
+        </table>
+      <% } else { %>
+        <h3>This folder is empty.</h3>
+      <% } %>
+    </section>
+  </main>
+</body>
+</html>

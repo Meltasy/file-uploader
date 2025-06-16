@@ -13,6 +13,7 @@ const CustomError = require('./errors/CustomError')
 
 const userRouter = require('./routes/userRouter')
 const folderRouter = require('./routes/folderRouter')
+const shareRouter = require('./routes/shareRouter')
 
 // Handle static assets
 const assetsPath = path.join(__dirname, 'public')
@@ -70,6 +71,7 @@ app.use((req, res, next) => {
 
 app.use('/', userRouter)
 app.use('/folder', folderRouter)
+app.use('/share', shareRouter)
 
 // Catches any final errors - must be at end
 app.use((req, res, next) => {

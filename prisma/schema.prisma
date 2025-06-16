@@ -23,6 +23,7 @@ model User {
   files    File[]
   folders  Folder[]
   sessions Session[]
+  shared   Shared[]
 }
 
 model Folder {
@@ -32,6 +33,7 @@ model Folder {
   owner      User     @relation(fields: [ownerId], references: [id])
   ownerId    String
   files      File[]
+  shared     Shared[]
 
   @@unique([name, ownerId])
 }
@@ -58,4 +60,15 @@ model Session {
   expiresAt DateTime
   owner     User?     @relation(fields: [ownerId], references: [id])
   ownerId   String?
+}
+
+model Shared {
+  id         String   @id @default(uuid())
+  shareId    String   @unique @default(uuid())
+  folder     Folder   @relation(fields: [folderId], references: [id], onDelete: Cascade)
+  folderId   String
+  owner      User     @relation(fields: [ownerId], references: [id])
+  ownerId    String
+  expiresAt  DateTime
+  uploadedAt DateTime @default(now())
 }

@@ -5,13 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="/styles.css">
   <script src="/openFileModal.js" defer></script>
+  <script src="/shareModal.js" defer></script>
   <title><%= title %></title>
 </head>
 <body>
   <%- include("./partials/navbar") %>
   <header>
     <h1><%= title %></h1>
-    <button type="button" class="openFileModal">Upload file</button>
+    <div>
+      <button type="button" class="openFileModal">Upload file</button>
+      <button type="button" class="openShareModal">Share folder</button>
+    </div>
     <dialog class="fileModal">
       <form action="/folder/<%= folder.id %>/newFile" method="POST" enctype="multipart/form-data">
         <div>
@@ -22,6 +26,32 @@
           <button type="submit">Upload file</button>
         </div>
       </form>
+    </dialog>
+    <dialog class="shareModal">
+      <form>
+        <div>
+          <label for="duration">Duration *</label>
+          <select id="duration" name="duration" required>
+            <option value="1d">1 day</option>
+            <option value="3d">3 days</option>
+            <option value="7d">1 week</option>
+            <option value="30d">1 month</option>
+          </select>
+          <button type="button" class="closeShareModal">X</button>
+        </div>
+        <div class="button">
+          <button type="submit">Create link</button>
+        </div>
+      </form>
+      <div id="shareResult">
+        <label for="shareUrl">Share link:</label>
+        <input type="text" id="shareUrl" name="shareUrl" readonly>
+        <button type="button" onclick="copyToClipboard()">Copy</button>
+        <div class="expires">
+          <label>Expires: <span id="expiresAt"></span></label>
+          <button type="button" class="closeCopyToClipboard">X</button>
+        </div>
+      </div>
     </dialog>
   </header>
   <main>
@@ -41,7 +71,7 @@
                 <%= file.uploadedAt.toString().split(' ').slice(0, 3).join(' ') %>
                 <%= file.uploadedAt.toString().split(' ').slice(4, 5).join(' ') %>
               </td>
-              <td><%= (file.size / 1024).toFixed(2) %></td>
+              <td><%= (file.size / 1024).toFixed(2) %> KB</td>
               <td>
                 <a href="<%= file.signedUrl %>" target="_blank">
                   <button type="button">Open</button>
