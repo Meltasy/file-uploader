@@ -19,7 +19,6 @@ passport.use(
       if (!match) {
         return done(null, false, { message: 'This passowrd is incorrect.' })
       }
-      console.log('User password matched: ', user, match)
       return done(null, user)
     } catch (err) {
       return done(err)

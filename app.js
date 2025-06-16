@@ -26,7 +26,7 @@ const upload = multer({
     fileSize: 10 * 1024 * 1024
   },
   fileFilter: (req, file, cb) => {
-    const blockedFiles = ['application/x-executable', 'application/x-msdownload', 'application/dosexec']
+    const blockedFiles = ['application/x-executable', 'application/x-msdownload', 'application/x-dosexec']
     if (blockedFiles.includes(file.mimetype)) {
       cb(new Error('This file type is not allowed for security reasons'), false)
     } else {

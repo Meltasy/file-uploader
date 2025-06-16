@@ -3,7 +3,7 @@ const prisma = new PrismaClient()
 const asyncHandler = require('express-async-handler')
 const CustomError = require('../errors/CustomError')
 const { validationResult } = require('express-validator')
-const { uploadFileSupabase, deleteFileSupabase } = require('../storage/fileService')
+const { uploadFileSupabase, deleteFileSupabase, getSignedUrl } = require('../storage/fileService')
 
 const createFolderPost = asyncHandler(async (req, res) => {
   const errors = validationResult(req)
@@ -49,11 +49,20 @@ const getFolder = asyncHandler(async (req, res) => {
   if (!folder) {
     throw new CustomError('Folder not found.', 404)
   }
+  const filesSignedUrls = await Promise.all(
+    folder.files.map(async (file) => {
+      const signedUrl = await getSignedUrl(file.storagePath, 3600)
+      return {
+        ...file,
+        signedUrl: signedUrl
+      }
+    })
+  )
   res.render('folder', {
     user: req.user,
     title: folder.name,
     folder: folder,
-    files: folder.files,
+    files: filesSignedUrls,
   })
 })
 
@@ -174,6 +183,36 @@ const deleteFolder = asyncHandler(async (req, res) => {
   }
 })
 
+const downloadFile = asyncHandler(async (req, res) => {
+  const fileId = req.params.fileId
+  const folderId = req.params.folderId
+
+  const file = await prisma.file.findFirst({
+    where: {
+      id: fileId,
+      folderId: folderId,
+      ownerId: req.user.id
+    }
+  })
+  if (!file) {
+    throw new CustomError('File not found', 404)
+  }
+  try {
+    const signedUrl = await getSignedUrl(file.storagePath, 300)
+    const response = await fetch(signedUrl)
+    if (!response.ok) {
+      throw new Error('Failed to fetch file from storage.')
+    }
+    res.setHeader('Content-Disposition', `attachment; filename="${file.name}"`)
+    res.setHeader('Content-type', 'application/octet-stream')
+    const buffer = await response.arrayBuffer()
+    res.send(Buffer.from(buffer))
+  } catch (error) {
+    console.error('Download error:', error)
+    throw new CustomError('Failed to download file. Please try again.', 500)
+  }
+})
+
 const deleteFile = asyncHandler(async (req, res) => {
   const fileId = req.params.fileId
   const folderId = req.params.folderId
@@ -209,5 +248,6 @@ module.exports = {
   createFilePost,
   updateFolder,
   deleteFolder,
+  downloadFile,
   deleteFile
 }
