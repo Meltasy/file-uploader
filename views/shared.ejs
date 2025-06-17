@@ -37,7 +37,7 @@
                 <a href="<%= file.signedUrl %>" target="_blank">
                   <button type="button">Open</button>
                 </a>
-                <form action="/folder/<%= folder.id %>/file/<%= file.id %>/download" method="GET">
+                <form action="/share/<%= shared.shareId %>/file/<%= file.id %>/download" method="GET">
                   <button type="submit">Download</button>
                 </form>
               </td>

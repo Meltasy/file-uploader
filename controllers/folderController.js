@@ -186,7 +186,6 @@ const deleteFolder = asyncHandler(async (req, res) => {
 const downloadFile = asyncHandler(async (req, res) => {
   const fileId = req.params.fileId
   const folderId = req.params.folderId
-
   const file = await prisma.file.findFirst({
     where: {
       id: fileId,
@@ -337,8 +336,50 @@ const getSharedFolder = asyncHandler(async (req, res) => {
     folder: shared.folder,
     files: filesSignedUrls,
     owner: shared.owner.username,
-    expiresAt: shared.expiresAt
+    expiresAt: shared.expiresAt,
+    shared: shared
   })
+})
+
+const downloadSharedFile = asyncHandler(async (req, res) => {
+  const fileId = req.params.fileId
+  const shareId = req.params.shareId
+  const shared = await prisma.shared.findFirst({
+    where: {
+      shareId: shareId,
+      expiresAt: {
+        gt: new Date()
+      }
+    },
+    include: {
+      folder: {
+        include: {
+          files: true
+        }
+      }
+    }
+  })
+  if (!shared) {
+    throw new CustomError('Shared folder not found or has expired.', 404)
+  }
+  const file = shared.folder.files.find(f => f.id === fileId)
+  if (!file) {
+    throw new CustomError('File not found in shared folder.', 404)
+  }
+  try {
+    const signedUrl = await getSignedUrl(file.storagePath, 300)
+    const response = await fetch(signedUrl)
+    if (!response.ok) {
+      throw new Error('Failed to fetch file from storage.')
+    }
+    res.setHeader('Content-Disposition', `attachment; filename="${file.name}"`)
+    res.setHeader('Content-type', 'application/octet-stream')
+    const buffer = await response.arrayBuffer()
+    res.send(Buffer.from(buffer))
+  } catch (error) {
+    console.error('Download error:', error)
+    throw new CustomError('Failed to download file. Please try again.', 500)
+  }
 })
 
 const deleteShare = asyncHandler(async (req, res) => {
@@ -372,5 +413,6 @@ module.exports = {
   deleteFile,
   createShare,
   getSharedFolder,
+  downloadSharedFile,
   deleteShare
 }
